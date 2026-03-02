@@ -1,0 +1,119 @@
+{
+  "name": "snapmd",
+  "displayName": "SnapMD",
+  "description": "Pixel-perfect Markdown export to PDF and images, featuring high-fidelity rendering for Mermaid diagrams and custom styles.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "snapmd.exportPdf",
+        "title": "SnapMD: Export to PDF",
+        "icon": "$(file-pdf)"
+      },
+      {
+        "command": "snapmd.previewMarkdown",
+        "title": "SnapMD: Preview Markdown",
+        "icon": "$(open-preview)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "snapmd.exportPdf",
+          "when": "resourceLangId == markdown",
+          "group": "navigation"
+        },
+        {
+          "command": "snapmd.previewMarkdown",
+          "when": "resourceLangId == markdown",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "snapmd.exportPdf",
+          "when": "resourceLangId == markdown",
+          "group": "snapmd@1"
+        },
+        {
+          "command": "snapmd.previewMarkdown",
+          "when": "resourceLangId == markdown",
+          "group": "snapmd@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "snapmd.exportPdf",
+          "when": "resourceLangId == markdown"
+        },
+        {
+          "command": "snapmd.previewMarkdown",
+          "when": "resourceLangId == markdown"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "SnapMD",
+      "properties": {
+        "snapmd.chromePath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to a Chrome/Chromium executable. Leave empty for auto-detection."
+        },
+        "snapmd.pdfFormat": {
+          "type": "string",
+          "default": "A4",
+          "enum": ["A4", "Letter", "Legal", "A3", "A5", "Tabloid"],
+          "description": "Paper format for PDF export."
+        },
+        "snapmd.printBackground": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include background colors and images in PDF export."
+        },
+        "snapmd.mermaidTimeout": {
+          "type": "number",
+          "default": 10000,
+          "description": "Timeout in milliseconds to wait for Mermaid diagrams to render."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.82.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.3",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "webpack": "^5.105.3",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.1",
+    "puppeteer-core": "^24.37.5"
+  }
+}

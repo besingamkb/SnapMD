@@ -2,14 +2,29 @@
   "name": "snapmd",
   "displayName": "SnapMD",
   "description": "Pixel-perfect Markdown export to PDF and images, featuring high-fidelity rendering for Mermaid diagrams and custom styles.",
+  "publisher": "MKBWorks",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/besingamkb/SnapMD.git"
+  },
   "icon": "assets/icon-v5.png",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.82.0"
   },
+  "keywords": [
+    "markdown",
+    "pdf",
+    "mermaid",
+    "export",
+    "preview",
+    "renderer"
+  ],
   "categories": [
+    "Visualization",
     "Other"
   ],
+  "license": "MIT",
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
@@ -72,7 +87,14 @@
         "snapmd.pdfFormat": {
           "type": "string",
           "default": "A4",
-          "enum": ["A4", "Letter", "Legal", "A3", "A5", "Tabloid"],
+          "enum": [
+            "A4",
+            "Letter",
+            "Legal",
+            "A3",
+            "A5",
+            "Tabloid"
+          ],
           "description": "Paper format for PDF export."
         },
         "snapmd.printBackground": {
@@ -106,7 +128,9 @@
     "@types/vscode": "^1.82.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.7.1",
     "eslint": "^9.39.3",
+    "markdown-it": "^14.1.1",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1",
@@ -114,7 +138,6 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "markdown-it": "^14.1.1",
     "puppeteer-core": "^24.37.5"
   }
 }

@@ -1,71 +1,160 @@
-# snapmd README
-
-This is the README for your extension "snapmd". After writing up a brief description, we recommend including the following sections.
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+<p align="center">
+  <h1 align="center">SnapMD</h1>
+  <p align="center">Pixel-perfect Markdown to PDF — with full Mermaid diagram support.</p>
+</p>
 
 ---
 
-## Following extension guidelines
+Other Markdown-to-PDF tools parse your document as flat text, breaking Mermaid diagrams, custom styles, and anything that needs a real browser to render. **SnapMD takes a different approach**: it renders your Markdown in a headless Chromium instance — the same engine behind Chrome — and prints it to PDF exactly as it looks.
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+## Features
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+### Export to PDF
 
-## Working with Markdown
+Convert any Markdown file to a clean, print-ready PDF in one click. Headings, code blocks, tables, images, links — everything renders faithfully.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+- Open any `.md` file → <kbd>Cmd+Shift+P</kbd> → `SnapMD: Export to PDF`
+- Or click the **PDF icon** in the editor title bar
+- Or **right-click** in the editor → `SnapMD: Export to PDF`
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+### Mermaid Diagram Support
 
-## For more information
+Mermaid code blocks are rendered as real SVG diagrams in your PDF — flowcharts, sequence diagrams, pie charts, Gantt charts, and more.
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+````markdown
+```mermaid
+graph LR
+    A[Markdown] --> B[HTML + Mermaid.js]
+    B --> C[Headless Chrome]
+    C --> D[Pixel-perfect PDF]
+```
+````
 
-**Enjoy!**
+### Live Preview
+
+Preview your rendered Markdown in a side panel — with Mermaid diagrams — before exporting.
+
+- <kbd>Cmd+Shift+P</kbd> → `SnapMD: Preview Markdown`
+- Edits update the preview in real time (~300ms debounce)
+- Click **Export to PDF** directly from the preview toolbar
+
+### Relative Image Support
+
+Images with relative paths (e.g., `![](./images/photo.png)`) resolve correctly from your file's directory. No broken images in your PDF.
+
+---
+
+## Requirements
+
+SnapMD requires a Chromium-based browser installed on your system. Any of these will work:
+
+- [Google Chrome](https://www.google.com/chrome/)
+- [Chromium](https://www.chromium.org/)
+- [Microsoft Edge](https://www.microsoft.com/edge)
+- [Brave](https://brave.com/)
+
+SnapMD auto-detects your browser. If detection fails, set the path manually (see [Settings](#settings) below).
+
+---
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `SnapMD: Export to PDF` | Export the current Markdown file to PDF |
+| `SnapMD: Preview Markdown` | Open a live-rendered preview panel |
+
+Both commands are available via:
+- **Command Palette** (<kbd>Cmd+Shift+P</kbd> / <kbd>Ctrl+Shift+P</kbd>)
+- **Editor title bar** icons (when a `.md` file is open)
+- **Right-click context menu** in the editor
+
+---
+
+## Settings
+
+Configure SnapMD in your VS Code settings (`settings.json` or the Settings UI):
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `snapmd.chromePath` | `""` (auto-detect) | Absolute path to a Chrome/Chromium executable |
+| `snapmd.pdfFormat` | `"A4"` | Paper size: `A4`, `Letter`, `Legal`, `A3`, `A5`, `Tabloid` |
+| `snapmd.printBackground` | `true` | Include background colors and images in the PDF |
+| `snapmd.mermaidTimeout` | `10000` | Max time (ms) to wait for Mermaid diagrams to render |
+
+### Example: Custom Chrome path
+
+```json
+{
+  "snapmd.chromePath": "/usr/bin/google-chrome-stable"
+}
+```
+
+---
+
+## How It Works
+
+```
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐     ┌─────────┐
+│  Markdown    │────>│  markdown-it │────>│   Headless   │────>│   PDF   │
+│  (.md file)  │     │  + Mermaid   │     │   Chromium   │     │  file   │
+└─────────────┘     └──────────────┘     └──────────────┘     └─────────┘
+                     Parse & render        Load as real          Print
+                     to full HTML          web page              to PDF
+```
+
+1. **Parse** — markdown-it converts your Markdown to HTML, with a custom plugin that transforms ```` ```mermaid ```` blocks into `<div class="mermaid">` elements
+2. **Render** — A headless Chromium instance loads the HTML as a real web page, fetching Mermaid.js from CDN to render diagrams as SVGs
+3. **Print** — Chromium's built-in PDF printer captures the fully-rendered page with precise layout
+
+---
+
+## FAQ
+
+<details>
+<summary><strong>Mermaid diagrams aren't rendering in my PDF</strong></summary>
+
+Mermaid.js is loaded from a CDN at render time. Ensure you have an internet connection. If diagrams still fail, try increasing the timeout:
+
+```json
+{
+  "snapmd.mermaidTimeout": 20000
+}
+```
+
+</details>
+
+<details>
+<summary><strong>"Could not find a Chrome/Chromium installation"</strong></summary>
+
+SnapMD needs a Chromium-based browser. Either:
+1. Install [Google Chrome](https://www.google.com/chrome/)
+2. Set the path manually: `"snapmd.chromePath": "/path/to/chrome"`
+3. Set the `CHROME_PATH` environment variable
+
+</details>
+
+<details>
+<summary><strong>Can I use this offline?</strong></summary>
+
+PDF export works offline for standard Markdown. However, Mermaid diagrams require an internet connection since Mermaid.js is loaded from a CDN. Diagrams will be skipped (not block the export) if the CDN is unreachable.
+
+</details>
+
+---
+
+## Release Notes
+
+### 0.0.1
+
+- Initial release
+- Export Markdown to PDF with Mermaid diagram support
+- Live preview panel with real-time updates
+- Cross-platform Chrome/Chromium/Edge/Brave auto-detection
+- Configurable paper format, margins, and background printing
+
+---
+
+## License
+
+[MIT](LICENSE)

@@ -23,36 +23,34 @@ export async function handleExportPdf(uri?: vscode.Uri): Promise<void> {
     return;
   }
 
-  await vscode.window.withProgress(
-    {
-      location: vscode.ProgressLocation.Notification,
-      title: 'SnapMD: Exporting to PDF…',
-      cancellable: false,
-    },
-    async () => {
-      showExporting();
-      try {
-        await exportToPdf({
-          markdownText: document.getText(),
-          outputPath: saveUri.fsPath,
-          title: path.basename(sourcePath, path.extname(sourcePath)),
-          sourceDir: path.dirname(sourcePath),
-        });
+  showExporting();
+  try {
+    await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: 'SnapMD: Exporting to PDF…',
+        cancellable: false,
+      },
+      () => exportToPdf({
+        markdownText: document.getText(),
+        outputPath: saveUri.fsPath,
+        title: path.basename(sourcePath, path.extname(sourcePath)),
+        sourceDir: path.dirname(sourcePath),
+      }),
+    );
 
-        showSuccess();
-        const openAction = 'Open PDF';
-        const result = await vscode.window.showInformationMessage(
-          `PDF exported to ${path.basename(saveUri.fsPath)}`,
-          openAction,
-        );
-        if (result === openAction) {
-          await vscode.env.openExternal(saveUri);
-        }
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : String(err);
-        showError('Export failed');
-        vscode.window.showErrorMessage(`SnapMD export failed: ${message}`);
-      }
-    },
-  );
+    showSuccess();
+    const openAction = 'Open PDF';
+    const result = await vscode.window.showInformationMessage(
+      `PDF exported to ${path.basename(saveUri.fsPath)}`,
+      openAction,
+    );
+    if (result === openAction) {
+      await vscode.env.openExternal(saveUri);
+    }
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    showError('Export failed');
+    vscode.window.showErrorMessage(`SnapMD export failed: ${message}`);
+  }
 }

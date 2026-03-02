@@ -2,6 +2,7 @@
   "name": "snapmd",
   "displayName": "SnapMD",
   "description": "Pixel-perfect Markdown export to PDF and images, featuring high-fidelity rendering for Mermaid diagrams and custom styles.",
+  "icon": "assets/icon-v5.png",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.82.0"
